@@ -1,0 +1,56 @@
+package main
+
+templ Greeting(name string) {
+	<div id="greeting">Hello, { name }</div>
+}
+
+templ Toast(options string) {
+	<span style=" background: #E1F0DA;opacity: 100;" id="toast">{ options }</span>
+}
+
+templ Button() {
+	<button 
+		hx-post="/frank"
+    	hx-trigger="click"
+		hx-target="#greeting"
+    	hx-swap="outerHTML"
+	>
+		Click Me!
+	</button>
+}
+
+templ Root(name string) {
+	@Greeting(name)
+	<br>
+	@Button()
+
+	<form id="checked-contacts"
+			hx-patch="/users"
+			hx-swap="outerHTML"
+			hx-target="#toast">
+		<table>
+		<thead>
+		<tr>
+			<th>Type</th>
+			<th>Approve?</th>
+		</tr>
+		</thead>
+		<tbody id="tbody">
+			<tr>
+			<td>Pizza</td>
+			<td><input type="checkbox" name="pizza"></td>
+			</tr>
+			<tr>
+			<td>Chinese</td>
+			<td><input type="checkbox" name="chinese"></td>
+			</tr>
+			<tr>
+			<td>Mexican</td>
+			<td><input type="checkbox" name="mexican"></td>
+			</tr>
+		</tbody>
+		</table>
+		<input type="submit" value="Bulk Update" class="btn primary">
+		<span style=" background: #E1F0DA;opacity: 0;transition: opacity 3s ease-out;" id="toast"></span>
+	</form>
+}
