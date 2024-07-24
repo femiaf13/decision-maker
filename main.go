@@ -79,7 +79,7 @@ func main() {
 		for key, value := range r.Form {
 			// fmt.Println(key)
 			// fmt.Println(value[0])
-			if strings.HasPrefix(key, "choice_") {
+			if strings.HasPrefix(key, "choice_") && len(value[0]) > 0 {
 				choices = append(choices, Choice{
 					Text: value[0],
 				})
@@ -92,8 +92,8 @@ func main() {
 		vote.Choices = choices
 		// fmt.Println(vote)
 		db.Create(&vote)
-
-		//TODO - Take the info and make DB rows with it
+		// fmt.Println(vote)
+		VoteOne(vote).Render(r.Context(), w)
 	}).Methods("POST")
 
 	router.HandleFunc("/users", FormHandler).Methods("PATCH")

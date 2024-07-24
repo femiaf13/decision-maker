@@ -87,7 +87,7 @@ templ CreateNewVote() {
 	<form
 		id="vote"
 		hx-post="/newvote"
-		hx-swap="none"
+		hx-swap="outerHTML"
 	>
 		<label for="title">Title of the vote:</label>
 		<input type="text" name="title"/>
@@ -111,7 +111,6 @@ templ CreateNewChoice(choiceNumber uint, addNewButton bool) {
 
 templ VoteOne(vote Vote) {
 	<form
-		id="oldvote"
 		hx-patch="/users"
 		hx-target="none"
 	>
