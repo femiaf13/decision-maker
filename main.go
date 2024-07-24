@@ -36,10 +36,12 @@ func main() {
 	db.AutoMigrate(&Vote{})
 	db.AutoMigrate(&Choice{})
 
-	content := Root("Strangers")
-	body := Page(content)
-
 	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		var vote Vote
+		db.Preload("Choices").First(&vote)
+		// fmt.Println(vote)
+		content := Root("Strangers", vote)
+		body := Page(content)
 		body.Render(r.Context(), w)
 	}).Methods("GET")
 
@@ -75,8 +77,8 @@ func main() {
 		var choices []Choice = make([]Choice, 0)
 		var vote Vote
 		for key, value := range r.Form {
-			fmt.Println(key)
-			fmt.Println(value[0])
+			// fmt.Println(key)
+			// fmt.Println(value[0])
 			if strings.HasPrefix(key, "choice_") {
 				choices = append(choices, Choice{
 					Text: value[0],
@@ -86,9 +88,9 @@ func main() {
 				vote = Vote{Title: value[0]}
 			}
 		}
-		fmt.Println(choices)
+		// fmt.Println(choices)
 		vote.Choices = choices
-		fmt.Println(vote)
+		// fmt.Println(vote)
 		db.Create(&vote)
 
 		//TODO - Take the info and make DB rows with it

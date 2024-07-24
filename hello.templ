@@ -1,7 +1,9 @@
 package main
 
-import "fmt"
-import "strings"
+import (
+	"fmt"
+	"strings"
+)
 
 templ Greeting(name string) {
 	<div id="greeting">Hello, { name }</div>
@@ -23,7 +25,7 @@ templ Button() {
 	</button>
 }
 
-templ Root(name string) {
+templ Root(name string, vote Vote) {
 	@Greeting(name)
 	<br/>
 	@Button()
@@ -70,8 +72,8 @@ templ Root(name string) {
 	// 	{Text: "Pizza", Vote: false},
 	// 	{Text: "Chinese", Vote: false},
 	// }})
-
 	@CreateNewVote()
+	@VoteOne(vote)
 }
 
 templ CreateChoice() {
@@ -88,24 +90,49 @@ templ CreateNewVote() {
 		hx-swap="none"
 	>
 		<label for="title">Title of the vote:</label>
-		<input type="text" name="title">
-		<br>
-		for i := 0; i < 2; i++{
+		<input type="text" name="title"/>
+		<br/>
+		for i := 0; i < 2; i++ {
 			@CreateNewChoice(uint(i), false)
 		}
 		<button hx-post="/newchoice" hx-swap="outerHTML" type="button">Add another choice</button>
 		<input type="submit" value="Submit" class="btn primary"/>
 	</form>
-	
 }
 
 templ CreateNewChoice(choiceNumber uint, addNewButton bool) {
 	<label for={ fmt.Sprintf("choice_%d", choiceNumber) }>Choice:</label>
-	<input type="text" name={ fmt.Sprintf("choice_%d", choiceNumber) }>
-	<br>
+	<input type="text" name={ fmt.Sprintf("choice_%d", choiceNumber) }/>
+	<br/>
 	if addNewButton {
 		<button hx-post="/newchoice" hx-swap="outerHTML" type="button">Add another choice</button>
 	}
+}
+
+templ VoteOne(vote Vote) {
+	<form
+		id="oldvote"
+		hx-patch="/users"
+		hx-target="none"
+	>
+		<table>
+			<thead>
+				<tr>
+					<th>{ vote.Title }</th>
+					<th>Approve?</th>
+				</tr>
+			</thead>
+			<tbody id="tbody">
+				for _, choice := range vote.Choices {
+					<tr>
+						<td>{ choice.Text }</td>
+						<td><input type="checkbox" name={ choice.Text }/></td>
+					</tr>
+				}
+			</tbody>
+		</table>
+		<input type="submit" value="Vote" class="btn primary"/>
+	</form>
 }
 
 templ DataStar() {
@@ -160,13 +187,13 @@ templ ThanksForVoting() {
 }
 
 templ CreateVoteDataStar() {
-	<div 
-	id="vote"
-	data-store={ fmt.Sprintf("{new_vote_title: \"\"}") }
+	<div
+		id="vote"
+		data-store={ fmt.Sprintf("{new_vote_title: \"\"}") }
 	>
 		<div>
 			<label>Title of Vote: </label>
-			<input type="text" data-model="new_vote_title">
+			<input type="text" data-model="new_vote_title"/>
 		</div>
 		<div>
 			<button data-on-click="$$post('/newvote')">
