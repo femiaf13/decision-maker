@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/Jeffail/gabs/v2"
@@ -57,6 +58,17 @@ func main() {
 		// This is how you change the data-store
 		datastar.PatchStore(datastar.NewSSE(w, r), update)
 	}).Methods("POST")
+
+	router.HandleFunc("/vote/{id}", func(w http.ResponseWriter, r *http.Request) {
+		params := mux.Vars(r)
+		// ignoring error checking here which is bad under normal circumstances
+		id, _ := strconv.Atoi(params["id"])
+		var vote Vote
+		db.Preload("Choices").First(&vote, id)
+		// fmt.Println(vote)
+		body := Page(VoteOne(vote))
+		body.Render(r.Context(), w)
+	}).Methods("GET")
 
 	router.HandleFunc("/vote", func(w http.ResponseWriter, r *http.Request) {
 		update, _ := gabs.ParseJSONBuffer(r.Body)
