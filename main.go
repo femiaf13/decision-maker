@@ -70,6 +70,17 @@ func main() {
 		body.Render(r.Context(), w)
 	}).Methods("GET")
 
+	router.HandleFunc("/results/{id}", func(w http.ResponseWriter, r *http.Request) {
+		params := mux.Vars(r)
+		// ignoring error checking here which is bad under normal circumstances
+		id, _ := strconv.Atoi(params["id"])
+		var vote Vote
+		db.Preload("Choices").First(&vote, id)
+		// fmt.Println(vote)
+		body := Page(VoteResults(vote))
+		body.Render(r.Context(), w)
+	}).Methods("GET")
+
 	router.HandleFunc("/vote", func(w http.ResponseWriter, r *http.Request) {
 		update, _ := gabs.ParseJSONBuffer(r.Body)
 		fmt.Println(update.String())

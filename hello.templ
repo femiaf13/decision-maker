@@ -134,6 +134,27 @@ templ VoteOne(vote Vote) {
 	</form>
 }
 
+templ VoteResults(vote Vote) {
+	<table>
+		<thead>
+			<tr>
+				<th>{ vote.Title }</th>
+				<th>Approvals</th>
+			</tr>
+		</thead>
+		<tbody id="tbody">
+			for _, choice := range vote.Choices {
+				<tr>
+					<td>{ choice.Text }</td>
+					<td>{ fmt.Sprintf("%d", choice.Approvals) }</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+	<br><br>
+	<div>Total voters: { fmt.Sprintf("%d", vote.NumberVoters) }</div>
+}
+
 templ DataStar() {
 	// <div data-store="{text:'hello world'}">
 	// 	<label data-text="$text.toUpperCase()"></label>
