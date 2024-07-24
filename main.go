@@ -77,8 +77,7 @@ func main() {
 		var vote Vote
 		db.Preload("Choices").First(&vote, id)
 		// fmt.Println(vote)
-		body := Page(VoteResults(vote))
-		body.Render(r.Context(), w)
+		VoteResults(vote).Render(r.Context(), w)
 	}).Methods("GET")
 
 	router.HandleFunc("/vote", func(w http.ResponseWriter, r *http.Request) {
