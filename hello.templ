@@ -114,6 +114,7 @@ templ VoteOne(vote Vote) {
 		hx-patch="/vote"
 		hx-vals={ fmt.Sprintf("{\"id\": %d}", vote.ID) }
 		hx-confirm="Are you sure you wish to submit your vote?"
+		hx-swap="outerHTML"
 	>
 		<table>
 			<thead>
@@ -136,24 +137,29 @@ templ VoteOne(vote Vote) {
 }
 
 templ VoteResults(vote Vote) {
-	<table>
-		<thead>
-			<tr>
-				<th>{ vote.Title }</th>
-				<th>Approvals</th>
-			</tr>
-		</thead>
-		<tbody id="tbody">
-			for _, choice := range vote.Choices {
+	<div
+		hx-get={ fmt.Sprintf("/results/%d", vote.ID) }
+		hx-trigger="every 10s"
+	>
+		<table>
+			<thead>
 				<tr>
-					<td>{ choice.Text }</td>
-					<td>{ fmt.Sprintf("%d", choice.Approvals) }</td>
+					<th>{ vote.Title }</th>
+					<th>Approvals</th>
 				</tr>
-			}
-		</tbody>
-	</table>
-	<br><br>
-	<div>Total voters: { fmt.Sprintf("%d", vote.NumberVoters) }</div>
+			</thead>
+			<tbody id="tbody">
+				for _, choice := range vote.Choices {
+					<tr>
+						<td>{ choice.Text }</td>
+						<td>{ fmt.Sprintf("%d", choice.Approvals) }</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+		<br><br>
+		<div>Total voters: { fmt.Sprintf("%d", vote.NumberVoters) }</div>
+	</div>
 }
 
 templ DataStar() {
