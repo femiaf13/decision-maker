@@ -26,44 +26,44 @@ templ Button() {
 }
 
 templ Root(name string, vote Vote) {
-	@Greeting(name)
-	<br/>
-	@Button()
-	<form
-		id="oldvote"
-		hx-patch="/users"
-		hx-swap="outerHTML"
-		hx-target="#toast"
-	>
-		<table>
-			<thead>
-				<tr>
-					<th>Type</th>
-					<th>Approve?</th>
-				</tr>
-			</thead>
-			<tbody id="tbody">
-				<tr>
-					<td>Pizza</td>
-					<td><input type="checkbox" name="pizza"/></td>
-				</tr>
-				<tr>
-					<td>Chinese</td>
-					<td><input type="checkbox" name="chinese"/></td>
-				</tr>
-				<tr>
-					<td>Mexican</td>
-					<td><input type="checkbox" name="mexican"/></td>
-				</tr>
-			</tbody>
-		</table>
-		<input type="submit" value="Bulk Update" class="btn primary"/>
-		<span style=" background: #E1F0DA;opacity: 0;transition: opacity 3s ease-out;" id="toast"></span>
-	</form>
-	<button hx-post="/newchoice" hx-target="#tbody" hx-swap="afterbegin" type="button">Add another choice</button>
-	// @DataStar()
-	<br/>
-	<br/>
+	// @Greeting(name)
+	// <br/>
+	// @Button()
+	// <form
+	// 	id="oldvote"
+	// 	hx-patch="/users"
+	// 	hx-swap="outerHTML"
+	// 	hx-target="#toast"
+	// >
+	// 	<table>
+	// 		<thead>
+	// 			<tr>
+	// 				<th>Type</th>
+	// 				<th>Approve?</th>
+	// 			</tr>
+	// 		</thead>
+	// 		<tbody id="tbody">
+	// 			<tr>
+	// 				<td>Pizza</td>
+	// 				<td><input type="checkbox" name="pizza"/></td>
+	// 			</tr>
+	// 			<tr>
+	// 				<td>Chinese</td>
+	// 				<td><input type="checkbox" name="chinese"/></td>
+	// 			</tr>
+	// 			<tr>
+	// 				<td>Mexican</td>
+	// 				<td><input type="checkbox" name="mexican"/></td>
+	// 			</tr>
+	// 		</tbody>
+	// 	</table>
+	// 	<input type="submit" value="Bulk Update" class="btn primary"/>
+	// 	<span style=" background: #E1F0DA;opacity: 0;transition: opacity 3s ease-out;" id="toast"></span>
+	// </form>
+	// <button hx-post="/newchoice" hx-target="#tbody" hx-swap="afterbegin" type="button">Add another choice</button>
+	// // @DataStar()
+	// <br/>
+	// <br/>
 	// @DataStarForm("7", VoteStore{Choices: []ChoiceStore{ 
 	// 	{Text: "Pizza",Vote: false},
 	// 	{Text: "Chinese", Vote: false},
@@ -73,7 +73,7 @@ templ Root(name string, vote Vote) {
 	// 	{Text: "Chinese", Vote: false},
 	// }})
 	@CreateNewVote()
-	@VoteOne(vote)
+	// @VoteOne(vote)
 }
 
 templ CreateChoice() {
@@ -112,8 +112,8 @@ templ CreateNewChoice(choiceNumber uint, addNewButton bool) {
 templ VoteOne(vote Vote) {
 	<form
 		hx-patch="/vote"
-		hx-swap="none"
 		hx-vals={ fmt.Sprintf("{\"id\": %d}", vote.ID) }
+		hx-confirm="Are you sure you wish to submit your vote?"
 	>
 		<table>
 			<thead>

@@ -82,11 +82,32 @@ func main() {
 	}).Methods("GET")
 
 	router.HandleFunc("/vote", func(w http.ResponseWriter, r *http.Request) {
-		update, _ := gabs.ParseJSONBuffer(r.Body)
-		fmt.Println(update.String())
-		datastar.PatchStore(datastar.NewSSE(w, r), update)
-		datastar.RenderFragmentTempl(datastar.NewSSE(w, r), ThanksForVoting())
-	}).Methods("POST")
+		// update, _ := gabs.ParseJSONBuffer(r.Body)
+		// fmt.Println(update.String())
+		// datastar.PatchStore(datastar.NewSSE(w, r), update)
+		// datastar.RenderFragmentTempl(datastar.NewSSE(w, r), ThanksForVoting())
+		r.ParseForm()
+		// fmt.Println(r.Form)
+
+		id, ok := r.Form["id"]
+		if ok {
+			var vote Vote
+			db.Preload("Choices").First(&vote, id)
+			// fmt.Println(vote)
+			vote.NumberVoters++
+			for key := range r.Form {
+				for idx, choice := range vote.Choices {
+					if key == choice.Text {
+						vote.Choices[idx].Approvals++
+					}
+				}
+			}
+			// fmt.Println(vote)
+			db.Session(&gorm.Session{FullSaveAssociations: true}).Updates(&vote)
+			VoteResults(vote).Render(r.Context(), w)
+		}
+
+	}).Methods("PATCH")
 
 	router.HandleFunc("/newvote", func(w http.ResponseWriter, r *http.Request) {
 		// update, _ := gabs.ParseJSONBuffer(r.Body)
@@ -95,7 +116,7 @@ func main() {
 		// datastar.RenderFragmentTempl(datastar.NewSSE(w, r), ThanksForVoting())
 
 		r.ParseForm()
-		fmt.Println(r.Form)
+		// fmt.Println(r.Form)
 
 		var choices []Choice = make([]Choice, 0)
 		var vote Vote
