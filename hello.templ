@@ -111,8 +111,9 @@ templ CreateNewChoice(choiceNumber uint, addNewButton bool) {
 
 templ VoteOne(vote Vote) {
 	<form
-		hx-patch="/users"
-		hx-target="none"
+		hx-patch="/vote"
+		hx-swap="none"
+		hx-vals={ fmt.Sprintf("{\"id\": %d}", vote.ID) }
 	>
 		<table>
 			<thead>
