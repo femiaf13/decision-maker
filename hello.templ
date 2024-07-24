@@ -2,78 +2,10 @@ package main
 
 import (
 	"fmt"
-	"strings"
 )
 
-templ Greeting(name string) {
-	<div id="greeting">Hello, { name }</div>
-}
-
-templ Toast(options string) {
-	<span style=" background: #E1F0DA;opacity: 100;" id="toast">{ options }</span>
-}
-
-templ Button() {
-	<button
-		hx-post="/frank"
-		hx-trigger="click"
-		hx-target="#greeting"
-		hx-swap="outerHTML"
-		data-on-click="console.log('hello world')"
-	>
-		Click Me!
-	</button>
-}
-
-templ Root(name string, vote Vote) {
-	// @Greeting(name)
-	// <br/>
-	// @Button()
-	// <form
-	// 	id="oldvote"
-	// 	hx-patch="/users"
-	// 	hx-swap="outerHTML"
-	// 	hx-target="#toast"
-	// >
-	// 	<table>
-	// 		<thead>
-	// 			<tr>
-	// 				<th>Type</th>
-	// 				<th>Approve?</th>
-	// 			</tr>
-	// 		</thead>
-	// 		<tbody id="tbody">
-	// 			<tr>
-	// 				<td>Pizza</td>
-	// 				<td><input type="checkbox" name="pizza"/></td>
-	// 			</tr>
-	// 			<tr>
-	// 				<td>Chinese</td>
-	// 				<td><input type="checkbox" name="chinese"/></td>
-	// 			</tr>
-	// 			<tr>
-	// 				<td>Mexican</td>
-	// 				<td><input type="checkbox" name="mexican"/></td>
-	// 			</tr>
-	// 		</tbody>
-	// 	</table>
-	// 	<input type="submit" value="Bulk Update" class="btn primary"/>
-	// 	<span style=" background: #E1F0DA;opacity: 0;transition: opacity 3s ease-out;" id="toast"></span>
-	// </form>
-	// <button hx-post="/newchoice" hx-target="#tbody" hx-swap="afterbegin" type="button">Add another choice</button>
-	// // @DataStar()
-	// <br/>
-	// <br/>
-	// @DataStarForm("7", VoteStore{Choices: []ChoiceStore{ 
-	// 	{Text: "Pizza",Vote: false},
-	// 	{Text: "Chinese", Vote: false},
-	// }})
-	// @DataStarForm("7", VoteStore{Choices: []ChoiceStore{
-	// 	{Text: "Pizza", Vote: false},
-	// 	{Text: "Chinese", Vote: false},
-	// }})
+templ Root() {
 	@CreateNewVote()
-	// @VoteOne(vote)
 }
 
 templ CreateChoice() {
@@ -109,7 +41,7 @@ templ CreateNewChoice(choiceNumber uint, addNewButton bool) {
 	}
 }
 
-templ VoteOne(vote Vote) {
+templ VoteTemplate(vote Vote) {
 	<form
 		hx-patch="/vote"
 		hx-vals={ fmt.Sprintf("{\"id\": %d}", vote.ID) }
@@ -159,73 +91,5 @@ templ VoteResults(vote Vote) {
 		</table>
 		<br><br>
 		<div>Total voters: { fmt.Sprintf("%d", vote.NumberVoters) }</div>
-	</div>
-}
-
-templ DataStar() {
-	// <div data-store="{text:'hello world'}">
-	// 	<label data-text="$text.toUpperCase()"></label>
-	// 	<input data-model="text" />
-	// </div>
-	<button type="button" data-on-click="$$post('/frank')">POST test</button>
-	<div id="output"></div>
-}
-
-templ BetterDataStar() {
-	<div id="output">I got updated</div>
-}
-
-type ChoiceStore struct {
-	Text string `json:"text"`
-	Vote bool   `json:"vote"`
-}
-
-type VoteStore struct {
-	Choices []ChoiceStore `json:"choices"`
-}
-
-templ DataStarForm(id string, store VoteStore) {
-	//data-store="{id: 1, choice_1: false,choice_2: true,choice_3: false}"
-	// data-store={ templ.JSONString(store) }
-	<div id="vote">
-		for index, item := range store.Choices {
-			@ChoiceTemplateDataStar(index, item)
-		}
-		<div>
-			<button data-on-click="$$post('/vote')">
-				Save
-			</button>
-		</div>
-	</div>
-}
-
-templ ChoiceTemplateDataStar(index int, store ChoiceStore) {
-	<div
-		class="form-control"
-		data-store={ fmt.Sprintf("{choice_%s: %t}", strings.ToLower(store.Text), store.Vote) }
-	>
-		<label>{ store.Text }</label>
-		<input type="checkbox" data-model={ fmt.Sprintf("choice_%s", strings.ToLower(store.Text)) }/>
-	</div>
-}
-
-templ ThanksForVoting() {
-	<div id="vote">Thanks for voting!</div>
-}
-
-templ CreateVoteDataStar() {
-	<div
-		id="vote"
-		data-store={ fmt.Sprintf("{new_vote_title: \"\"}") }
-	>
-		<div>
-			<label>Title of Vote: </label>
-			<input type="text" data-model="new_vote_title"/>
-		</div>
-		<div>
-			<button data-on-click="$$post('/newvote')">
-				Save
-			</button>
-		</div>
 	</div>
 }

@@ -7,8 +7,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/Jeffail/gabs/v2"
-	"github.com/delaneyj/datastar"
 	"github.com/gorilla/mux"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -41,23 +39,8 @@ func main() {
 		var vote Vote
 		db.Preload("Choices").First(&vote)
 		// fmt.Println(vote)
-		content := Root("Strangers", vote)
-		body := Page(content)
-		body.Render(r.Context(), w)
+		Page(Root()).Render(r.Context(), w)
 	}).Methods("GET")
-
-	router.HandleFunc("/frank", func(w http.ResponseWriter, r *http.Request) {
-		// Greeting("Frank").Render(r.Context(), w)
-		// NewVote().Render(r.Context(), w)
-		// DataStar().Render(r.Context(), w)
-		update, _ := gabs.ParseJSONBuffer(r.Body)
-		fmt.Println(update.String())
-		// This is how you send HTML down HTMX style
-		datastar.RenderFragmentTempl(datastar.NewSSE(w, r), BetterDataStar())
-		update.Set(true, "choice_pizza")
-		// This is how you change the data-store
-		datastar.PatchStore(datastar.NewSSE(w, r), update)
-	}).Methods("POST")
 
 	router.HandleFunc("/vote/{id}", func(w http.ResponseWriter, r *http.Request) {
 		params := mux.Vars(r)
@@ -66,7 +49,7 @@ func main() {
 		var vote Vote
 		db.Preload("Choices").First(&vote, id)
 		// fmt.Println(vote)
-		body := Page(VoteOne(vote))
+		body := Page(VoteTemplate(vote))
 		body.Render(r.Context(), w)
 	}).Methods("GET")
 
@@ -85,10 +68,6 @@ func main() {
 	}).Methods("GET")
 
 	router.HandleFunc("/vote", func(w http.ResponseWriter, r *http.Request) {
-		// update, _ := gabs.ParseJSONBuffer(r.Body)
-		// fmt.Println(update.String())
-		// datastar.PatchStore(datastar.NewSSE(w, r), update)
-		// datastar.RenderFragmentTempl(datastar.NewSSE(w, r), ThanksForVoting())
 		r.ParseForm()
 		// fmt.Println(r.Form)
 
@@ -109,15 +88,9 @@ func main() {
 			db.Session(&gorm.Session{FullSaveAssociations: true}).Updates(&vote)
 			VoteResults(vote).Render(r.Context(), w)
 		}
-
 	}).Methods("PATCH")
 
 	router.HandleFunc("/newvote", func(w http.ResponseWriter, r *http.Request) {
-		// update, _ := gabs.ParseJSONBuffer(r.Body)
-		// fmt.Println(update.String())
-		// datastar.PatchStore(datastar.NewSSE(w, r), update)
-		// datastar.RenderFragmentTempl(datastar.NewSSE(w, r), ThanksForVoting())
-
 		r.ParseForm()
 		// fmt.Println(r.Form)
 
@@ -140,10 +113,8 @@ func main() {
 		// fmt.Println(vote)
 		db.Create(&vote)
 		// fmt.Println(vote)
-		VoteOne(vote).Render(r.Context(), w)
+		VoteTemplate(vote).Render(r.Context(), w)
 	}).Methods("POST")
-
-	router.HandleFunc("/users", FormHandler).Methods("PATCH")
 
 	router.HandleFunc("/newchoice", func(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
@@ -155,18 +126,4 @@ func main() {
 
 	fmt.Println("Listening on :3000")
 	http.ListenAndServe(":3000", router)
-}
-
-func FormHandler(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
-	var sb strings.Builder
-	sb.WriteString("Approved: ")
-	for option, approval := range r.Form {
-		approved := approval[0] == "on"
-		if approved {
-			sb.WriteString(option)
-			sb.WriteString(" ")
-		}
-	}
-	Toast(sb.String()).Render(r.Context(), w)
 }
