@@ -9,26 +9,33 @@ templ Root() {
 }
 
 templ CreateNewVote() {
-	<form
-		id="vote"
-		hx-post="/newvote"
-		hx-swap="outerHTML"
+	<div
+		class="rounded-lg p-2"
 	>
-		<label for="title">Title of the vote:</label>
-		<input type="text" name="title"/>
-		<br/>
-		for i := 0; i < 2; i++ {
-			@CreateNewChoice(uint(i), false)
-		}
-		<button hx-post="/newchoice" hx-swap="outerHTML" type="button">Add another choice</button>
-		<input type="submit" value="Submit" class="btn primary"/>
-	</form>
+		<form
+			id="vote"
+			hx-post="/newvote"
+			hx-swap="outerHTML"
+			class="bg-violet-600 text-white max-w-sm mx-auto rounded-lg"
+		>
+			<div class="m-5">
+				<label class="block mb-2 text-base font-medium p-1" for="title">Title of the vote:</label>
+				<input class="form-input rounded-lg block w-full p-2.5 text-base text-black" type="text" name="title"/>
+			</div>
+			for i := 0; i < 2; i++ {
+				@CreateNewChoice(uint(i), false)
+			}
+			<button hx-post="/newchoice" hx-swap="outerHTML" type="button">Add another choice</button>
+			<input type="submit" value="Submit" class=""/>
+		</form>
+	</div>
 }
 
 templ CreateNewChoice(choiceNumber uint, addNewButton bool) {
-	<label for={ fmt.Sprintf("choice_%d", choiceNumber) }>Choice:</label>
-	<input type="text" name={ fmt.Sprintf("choice_%d", choiceNumber) }/>
-	<br/>
+	<div class="m-5">
+		<label class="block mb-2 text-base font-medium p-1" for={ fmt.Sprintf("choice_%d", choiceNumber) }>Choice:</label>
+		<input class="form-input rounded-lg block w-full p-2.5 text-base text-black" type="text" name={ fmt.Sprintf("choice_%d", choiceNumber) }/>
+	</div>
 	if addNewButton {
 		<button hx-post="/newchoice" hx-swap="outerHTML" type="button">Add another choice</button>
 	}

@@ -35,6 +35,9 @@ func main() {
 	db.AutoMigrate(&Vote{})
 	db.AutoMigrate(&Choice{})
 
+	// This will serve files under http://localhost:8000/static/<filename>
+	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
+
 	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		var vote Vote
 		db.Preload("Choices").First(&vote)
