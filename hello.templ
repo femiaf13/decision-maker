@@ -10,13 +10,13 @@ templ Root() {
 
 templ CreateNewVote() {
 	<div
-		class="rounded-lg p-2"
+		class="relative rounded-lg p-2"
 	>
 		<form
 			id="vote"
 			hx-post="/newvote"
 			hx-swap="outerHTML"
-			class="bg-violet-600 text-white max-w-sm mx-auto rounded-lg"
+			class="relative bg-violet-600 text-white max-w-sm mx-auto rounded-lg"
 		>
 			<div class="m-5">
 				<label class="block mb-2 text-base font-medium p-1" for="title">Title of the vote:</label>
@@ -25,20 +25,31 @@ templ CreateNewVote() {
 			for i := 0; i < 2; i++ {
 				@CreateNewChoice(uint(i), false)
 			}
-			<button hx-post="/newchoice" hx-swap="outerHTML" type="button">Add another choice</button>
-			<input type="submit" value="Submit" class=""/>
+			@anotherChoicebutton()
+			<input type="submit" value="Submit" class="absolute right-1 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2"/>
 		</form>
 	</div>
 }
 
 templ CreateNewChoice(choiceNumber uint, addNewButton bool) {
-	<div class="m-5">
-		<label class="block mb-2 text-base font-medium p-1" for={ fmt.Sprintf("choice_%d", choiceNumber) }>Choice:</label>
-		<input class="form-input rounded-lg block w-full p-2.5 text-base text-black" type="text" name={ fmt.Sprintf("choice_%d", choiceNumber) }/>
+	<div class="m-5 pb-1">
+		<label class="block text-base font-medium mb-2 p-1" for={ fmt.Sprintf("choice_%d", choiceNumber) }>Choice:</label>
+		<input class="form-input rounded-lg block w-full mb-2 p-2.5 text-base text-black" type="text" name={ fmt.Sprintf("choice_%d", choiceNumber) }/>
 	</div>
 	if addNewButton {
-		<button hx-post="/newchoice" hx-swap="outerHTML" type="button">Add another choice</button>
+		// <button hx-post="/newchoice" hx-swap="outerHTML" type="button">Add another choice</button>
+		@anotherChoicebutton()
 	}
+}
+
+templ anotherChoicebutton() {
+	<button 
+		hx-post="/newchoice" 
+		hx-swap="outerHTML" 
+		type="button"
+		class="absolute left-1 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">
+	+
+	</button>
 }
 
 templ VoteTemplate(vote Vote) {
