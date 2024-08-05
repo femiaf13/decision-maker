@@ -52,31 +52,39 @@ templ anotherChoicebutton() {
 	</button>
 }
 
+var voteTablePadding = "px-6 py-3"
+
 templ VoteTemplate(vote Vote) {
-	<form
-		hx-patch="/vote"
-		hx-vals={ fmt.Sprintf("{\"id\": %d}", vote.ID) }
-		hx-confirm="Are you sure you wish to submit your vote?"
-		hx-swap="outerHTML"
+	<div
+		class="relative rounded-lg p-2"
 	>
-		<table>
-			<thead>
-				<tr>
-					<th>{ vote.Title }</th>
-					<th>Approve?</th>
-				</tr>
-			</thead>
-			<tbody id="tbody">
-				for _, choice := range vote.Choices {
+		<form
+			hx-patch="/vote"
+			hx-vals={ fmt.Sprintf("{\"id\": %d}", vote.ID) }
+			hx-confirm="Are you sure you wish to submit your vote?"
+			hx-swap="outerHTML"
+			class="relative bg-violet-600 text-white max-w-sm mx-auto rounded-lg"
+		>
+			<table class="table-auto text-white m-2">
+				<thead class="uppercase text-pink-200">
 					<tr>
-						<td>{ choice.Text }</td>
-						<td><input type="checkbox" name={ choice.Text }/></td>
+						<th class={voteTablePadding}>{ vote.Title }</th>
+						<th class={voteTablePadding}>Approve?</th>
 					</tr>
-				}
-			</tbody>
-		</table>
-		<input type="submit" value="Vote" class="btn primary"/>
-	</form>
+				</thead>
+				<tbody id="tbody">
+					for _, choice := range vote.Choices {
+						<tr>
+							<td class={voteTablePadding}>{ choice.Text }</td>
+							<td class={voteTablePadding}><input type="checkbox" name={ choice.Text }/></td>
+						</tr>
+					}
+				</tbody>
+			</table>
+			<input type="submit" value="Vote" class="absolute right-1 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2"/>
+		</form>
+	</div>
+	
 }
 
 templ VoteResults(vote Vote) {
