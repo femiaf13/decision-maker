@@ -62,12 +62,7 @@ func main() {
 		id, _ := strconv.Atoi(params["id"])
 		var vote Vote
 		db.Preload("Choices").First(&vote, id)
-		// fmt.Println(vote)
-
-		// Something to note with this: When going directly to this URL
-		// htmx will not be loaded so it is a static page. Coming from the vote apge
-		// htmx is already loaded and the polling will happen. This to be acceptable.
-		VoteResults(vote).Render(r.Context(), w)
+		Page(VoteResults(vote)).Render(r.Context(), w)
 	}).Methods("GET")
 
 	router.HandleFunc("/vote", func(w http.ResponseWriter, r *http.Request) {

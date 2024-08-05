@@ -56,7 +56,7 @@ var voteTablePadding = "px-6 py-3"
 
 templ VoteTemplate(vote Vote) {
 	<div
-		class="relative rounded-lg p-2"
+		class="relative rounded-lg m-4 p-2"
 	>
 		<form
 			hx-patch="/vote"
@@ -66,7 +66,7 @@ templ VoteTemplate(vote Vote) {
 			class="relative bg-violet-600 text-white max-w-sm mx-auto rounded-lg"
 		>
 			<table class="table-auto text-white m-2">
-				<thead class="uppercase text-pink-200">
+				<thead class="uppercase text-pink-300">
 					<tr>
 						<th class={voteTablePadding}>{ vote.Title }</th>
 						<th class={voteTablePadding}>Approve?</th>
@@ -88,27 +88,26 @@ templ VoteTemplate(vote Vote) {
 }
 
 templ VoteResults(vote Vote) {
-	<div
-		hx-get={ fmt.Sprintf("/results/%d", vote.ID) }
-		hx-trigger="every 10s"
-	>
-		<table>
-			<thead>
-				<tr>
-					<th>{ vote.Title }</th>
-					<th>Approvals</th>
-				</tr>
-			</thead>
-			<tbody id="tbody">
-				for _, choice := range vote.Choices {
+	<div class="relative rounded-lg m-4 p-2">
+		<div class="relative bg-violet-600 text-white max-w-sm mx-auto rounded-lg">
+			<table class="relative table-auto text-white m-2">
+				<thead class="uppercase text-pink-300">
 					<tr>
-						<td>{ choice.Text }</td>
-						<td>{ fmt.Sprintf("%d", choice.Approvals) }</td>
+						<th class={voteTablePadding}>{ vote.Title }</th>
+						<th class={voteTablePadding}>Approvals</th>
 					</tr>
-				}
-			</tbody>
-		</table>
-		<br><br>
-		<div>Total voters: { fmt.Sprintf("%d", vote.NumberVoters) }</div>
+				</thead>
+				<tbody id="tbody">
+					for _, choice := range vote.Choices {
+						<tr>
+							<td class={voteTablePadding}>{ choice.Text }</td>
+							<td class={voteTablePadding}>{ fmt.Sprintf("%d", choice.Approvals) }</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+			<br><br>
+			<div class={voteTablePadding}><strong>Total voters: { fmt.Sprintf("%d", vote.NumberVoters) }</strong></div>
+		</div>
 	</div>
 }
