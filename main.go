@@ -45,6 +45,13 @@ func main() {
 		Page(Root(votes)).Render(r.Context(), w)
 	}).Methods("GET")
 
+	router.HandleFunc("/vote", func(w http.ResponseWriter, r *http.Request) {
+		var votes []Vote
+		db.Preload("Choices").Find(&votes)
+		body := Page(AllVotesTable(votes))
+		body.Render(r.Context(), w)
+	}).Methods("GET")
+
 	router.HandleFunc("/vote/{id}", func(w http.ResponseWriter, r *http.Request) {
 		params := mux.Vars(r)
 		// ignoring error checking here which is bad under normal circumstances

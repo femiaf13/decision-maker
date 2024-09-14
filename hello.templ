@@ -8,14 +8,21 @@ var voteTablePadding = "px-6 py-3"
 var voteTableButtonStyle = "bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-2 py-2.5 me-2 mb-2"
 
 templ Root(votes []Vote) {
-	
+	<button 
+		type="button"
+		hx-get="/vote"
+		hx-target="#all-votes-table"
+		hx-swap="outerHTML"
+	>
+		Refresh votes
+	</button>
 	@AllVotesTable(votes)
 	@CreateNewVote()
 }
 
 // Create a table for all current votes
 templ AllVotesTable(votes []Vote) {
-	<div id="all_votes_table">
+	<div id="all-votes-table">
 		<div class="relative rounded-lg m-4 p-2">
 			<div class="relative bg-violet-600 text-white max-w-fit mx-auto rounded-lg">
 				<table class="relative table-auto text-white m-2">
@@ -39,7 +46,9 @@ templ AllVotesTable(votes []Vote) {
 									type="button"
 									hx-get={ fmt.Sprintf("/vote/%d", vote.ID)}
 									hx-swap="outerHTML"
-									class={voteTableButtonStyle}>Vote
+									class={voteTableButtonStyle}
+								>
+									Vote
 								</button>
 							</td>
 							<td>
@@ -47,7 +56,9 @@ templ AllVotesTable(votes []Vote) {
 									type="button"
 									hx-get={ fmt.Sprintf("/results/%d", vote.ID)}
 									hx-swap="outerHTML"
-									class={voteTableButtonStyle}>See Results
+									class={voteTableButtonStyle}
+								>
+									See Results
 								</button>
 							</td>
 						</tr>
