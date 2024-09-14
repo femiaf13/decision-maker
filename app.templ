@@ -1,30 +1,29 @@
 package main
 
-import (
-	"fmt"
-)
+import "fmt"
 
 var voteTablePadding = "px-6 py-3"
 var voteTableButtonStyle = "bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-white text-sm px-2 py-2.5 me-2 mb-2"
+
 const MAIN_CONTENT_CARD_ID string = "main-content-card"
 
 templ Root(votes []Vote) {
 	<div class="flex justify-center p-3">
-		<button 
+		<button
 			type="button"
 			hx-get="/vote"
-			hx-target={"#"+MAIN_CONTENT_CARD_ID}
+			hx-target={ "#" + MAIN_CONTENT_CARD_ID }
 			hx-swap="outerHTML"
-			class={voteTableButtonStyle}
+			class={ voteTableButtonStyle }
 		>
 			Refresh Votes
 		</button>
-		<button 
+		<button
 			type="button"
 			hx-get="/newvote"
-			hx-target={"#"+MAIN_CONTENT_CARD_ID}
+			hx-target={ "#" + MAIN_CONTENT_CARD_ID }
 			hx-swap="outerHTML"
-			class={voteTableButtonStyle}
+			class={ voteTableButtonStyle }
 		>
 			Create New Vote
 		</button>
@@ -34,50 +33,51 @@ templ Root(votes []Vote) {
 
 // Create a table for all current votes
 templ AllVotesTable(votes []Vote) {
-	<div id={MAIN_CONTENT_CARD_ID}>
+	<div id={ MAIN_CONTENT_CARD_ID }>
 		<div class="relative rounded-lg m-4 p-2">
 			<div class="relative bg-violet-600 text-white max-w-fit mx-auto rounded-lg">
 				<table class="relative table-auto text-white m-2">
 					<thead class="uppercase text-pink-300">
 						<tr>
-							<th class={voteTablePadding}>Vote Title</th>
-							<th class={voteTablePadding}># of Votes</th>
-							<th class={voteTablePadding}>Created at</th>
-							<th class={voteTablePadding}></th>
-							<th class={voteTablePadding}></th>
+							<th class={ voteTablePadding }>Vote Title</th>
+							<th class={ voteTablePadding }># of Votes</th>
+							<th class={ voteTablePadding }>Created at</th>
+							<th class={ voteTablePadding }></th>
+							<th class={ voteTablePadding }></th>
 						</tr>
 					</thead>
 					<tbody id="tbody">
-					for _, vote := range votes {
-						<tr>
-							<td class={voteTablePadding}>{ vote.Title }</td>
-							<td class={voteTablePadding}>{ fmt.Sprintf("%d", vote.NumberVoters) }</td>
-							<td class={voteTablePadding}>{ vote.CreatedAt.Format("2006-01-02 15:04:05") }</td>
-							<td>
-								<button
-									type="button"
-									hx-get={ fmt.Sprintf("/vote/%d", vote.ID)}
-									hx-swap="outerHTML"
-									class={voteTableButtonStyle}
-								>
-									Vote
-								</button>
-							</td>
-							<td>
-								<button 
-									type="button"
-									hx-get={ fmt.Sprintf("/results/%d", vote.ID)}
-									hx-swap="outerHTML"
-									class={voteTableButtonStyle}
-								>
-									See Results
-								</button>
-							</td>
-						</tr>
-					}
+						for _, vote := range votes {
+							<tr>
+								<td class={ voteTablePadding }>{ vote.Title }</td>
+								<td class={ voteTablePadding }>{ fmt.Sprintf("%d", vote.NumberVoters) }</td>
+								<td class={ voteTablePadding }>{ vote.CreatedAt.Format("2006-01-02 15:04:05") }</td>
+								<td>
+									<button
+										type="button"
+										hx-get={ fmt.Sprintf("/vote/%d", vote.ID) }
+										hx-swap="outerHTML"
+										class={ voteTableButtonStyle }
+									>
+										Vote
+									</button>
+								</td>
+								<td>
+									<button
+										type="button"
+										hx-get={ fmt.Sprintf("/results/%d", vote.ID) }
+										hx-swap="outerHTML"
+										class={ voteTableButtonStyle }
+									>
+										See Results
+									</button>
+								</td>
+							</tr>
+						}
 					</tbody>
 				</table>
-				<br><br>
+				<br/>
+				<br/>
 			</div>
 		</div>
 	</div>
@@ -85,7 +85,7 @@ templ AllVotesTable(votes []Vote) {
 
 templ CreateNewVote() {
 	<div
-		id={MAIN_CONTENT_CARD_ID}
+		id={ MAIN_CONTENT_CARD_ID }
 		class="relative rounded-lg p-2"
 	>
 		<form
@@ -119,12 +119,13 @@ templ CreateNewChoice(choiceNumber uint, addNewButton bool) {
 }
 
 templ anotherChoicebutton() {
-	<button 
-		hx-post="/newchoice" 
-		hx-swap="outerHTML" 
+	<button
+		hx-post="/newchoice"
+		hx-swap="outerHTML"
 		type="button"
-		class="absolute left-1 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">
-	+
+		class="absolute left-1 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2"
+	>
+		+
 	</button>
 }
 
@@ -142,15 +143,15 @@ templ VoteTemplate(vote Vote) {
 			<table class="table-auto text-white m-2">
 				<thead class="uppercase text-pink-300">
 					<tr>
-						<th class={voteTablePadding}>{ vote.Title }</th>
-						<th class={voteTablePadding}>Approve?</th>
+						<th class={ voteTablePadding }>{ vote.Title }</th>
+						<th class={ voteTablePadding }>Approve?</th>
 					</tr>
 				</thead>
 				<tbody id="tbody">
 					for _, choice := range vote.Choices {
 						<tr>
-							<td class={voteTablePadding}>{ choice.Text }</td>
-							<td class={voteTablePadding}><input type="checkbox" name={ choice.Text }/></td>
+							<td class={ voteTablePadding }>{ choice.Text }</td>
+							<td class={ voteTablePadding }><input type="checkbox" name={ choice.Text }/></td>
 						</tr>
 					}
 				</tbody>
@@ -158,7 +159,6 @@ templ VoteTemplate(vote Vote) {
 			<input type="submit" value="Vote" class="absolute right-1 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2"/>
 		</form>
 	</div>
-	
 }
 
 templ VoteResults(vote Vote) {
@@ -167,25 +167,26 @@ templ VoteResults(vote Vote) {
 			<table class="relative table-auto text-white m-2">
 				<thead class="uppercase text-pink-300">
 					<tr>
-						<th class={voteTablePadding}>{ vote.Title }</th>
-						<th class={voteTablePadding}>Approvals</th>
+						<th class={ voteTablePadding }>{ vote.Title }</th>
+						<th class={ voteTablePadding }>Approvals</th>
 					</tr>
 				</thead>
 				<tbody id="tbody">
 					for _, choice := range vote.Choices {
 						<tr>
-							<td class={voteTablePadding}>{ choice.Text }</td>
-							<td class={voteTablePadding}>{ fmt.Sprintf("%d", choice.Approvals) }</td>
+							<td class={ voteTablePadding }>{ choice.Text }</td>
+							<td class={ voteTablePadding }>{ fmt.Sprintf("%d", choice.Approvals) }</td>
 						</tr>
 					}
 				</tbody>
 			</table>
-			<br><br>
-			<div class={voteTablePadding}><strong>Total voters: { fmt.Sprintf("%d", vote.NumberVoters) }</strong></div>
+			<br/>
+			<br/>
+			<div class={ voteTablePadding }><strong>Total voters: { fmt.Sprintf("%d", vote.NumberVoters) }</strong></div>
 		</div>
 	</div>
 }
 
 templ MaxVotesReached() {
-	<div id={MAIN_CONTENT_CARD_ID} class="flex justify-center text-white">Maximum number of votes reached! Please wait for older votes to be deleted</div>
+	<div id={ MAIN_CONTENT_CARD_ID } class="flex justify-center text-white">Maximum number of votes reached! Please wait for older votes to be deleted</div>
 }
