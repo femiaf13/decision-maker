@@ -120,6 +120,10 @@ func main() {
 		VoteTemplate(vote).Render(r.Context(), w)
 	}).Methods("POST")
 
+	router.HandleFunc("/newvote", func(w http.ResponseWriter, r *http.Request) {
+		CreateNewVote().Render(r.Context(), w)
+	}).Methods("GET")
+
 	router.HandleFunc("/newchoice", func(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
 		// fmt.Println(len(r.Form))

@@ -6,26 +6,35 @@ import (
 
 var voteTablePadding = "px-6 py-3"
 var voteTableButtonStyle = "bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-white text-sm px-2 py-2.5 me-2 mb-2"
+const MAIN_CONTENT_CARD_ID string = "main-content-card"
 
 templ Root(votes []Vote) {
-	@AllVotesTable(votes)
-	<div class="flex justify-center">
+	<div class="flex justify-center p-3">
 		<button 
 			type="button"
 			hx-get="/vote"
-			hx-target="#all-votes-table"
+			hx-target={"#"+MAIN_CONTENT_CARD_ID}
 			hx-swap="outerHTML"
 			class={voteTableButtonStyle}
 		>
-			Refresh votes
+			Refresh Votes
+		</button>
+		<button 
+			type="button"
+			hx-get="/newvote"
+			hx-target={"#"+MAIN_CONTENT_CARD_ID}
+			hx-swap="outerHTML"
+			class={voteTableButtonStyle}
+		>
+			Create New Vote
 		</button>
 	</div>
-	// @CreateNewVote()
+	@AllVotesTable(votes)
 }
 
 // Create a table for all current votes
 templ AllVotesTable(votes []Vote) {
-	<div id="all-votes-table">
+	<div id={MAIN_CONTENT_CARD_ID}>
 		<div class="relative rounded-lg m-4 p-2">
 			<div class="relative bg-violet-600 text-white max-w-fit mx-auto rounded-lg">
 				<table class="relative table-auto text-white m-2">
@@ -76,6 +85,7 @@ templ AllVotesTable(votes []Vote) {
 
 templ CreateNewVote() {
 	<div
+		id={MAIN_CONTENT_CARD_ID}
 		class="relative rounded-lg p-2"
 	>
 		<form
