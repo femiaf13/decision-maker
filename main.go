@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/gorilla/mux"
 	"gorm.io/driver/sqlite"
@@ -26,6 +27,8 @@ type Choice struct {
 	Approvals uint
 }
 
+const MAX_VOTES = 12
+
 func main() {
 	router := mux.NewRouter()
 	db, err := gorm.Open(sqlite.Open("data/app.db"), &gorm.Config{})
@@ -34,6 +37,7 @@ func main() {
 	}
 	db.AutoMigrate(&Vote{})
 	db.AutoMigrate(&Choice{})
+	go dbCleanup(db)
 
 	// This will serve files under ./static/<filename>
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
@@ -95,33 +99,40 @@ func main() {
 	}).Methods("PATCH")
 
 	router.HandleFunc("/newvote", func(w http.ResponseWriter, r *http.Request) {
-		r.ParseForm()
-		// fmt.Println(r.Form)
+		var votes []Vote
+		db.Find(&votes)
+		if len(votes) < MAX_VOTES {
+			CreateNewVote().Render(r.Context(), w)
+		} else {
+			r.ParseForm()
+			// fmt.Println(r.Form)
 
-		var choices []Choice = make([]Choice, 0)
-		var vote Vote
-		for key, value := range r.Form {
-			// fmt.Println(key)
-			// fmt.Println(value[0])
-			if strings.HasPrefix(key, "choice_") && len(value[0]) > 0 {
-				choices = append(choices, Choice{
-					Text: value[0],
-				})
+			var choices []Choice = make([]Choice, 0)
+			var vote Vote
+			for key, value := range r.Form {
+				if strings.HasPrefix(key, "choice_") && len(value[0]) > 0 {
+					choices = append(choices, Choice{
+						Text: value[0],
+					})
+				}
+				if key == "title" {
+					vote = Vote{Title: value[0]}
+				}
 			}
-			if key == "title" {
-				vote = Vote{Title: value[0]}
-			}
+			vote.Choices = choices
+			db.Create(&vote)
+			VoteTemplate(vote).Render(r.Context(), w)
 		}
-		// fmt.Println(choices)
-		vote.Choices = choices
-		// fmt.Println(vote)
-		db.Create(&vote)
-		// fmt.Println(vote)
-		VoteTemplate(vote).Render(r.Context(), w)
 	}).Methods("POST")
 
 	router.HandleFunc("/newvote", func(w http.ResponseWriter, r *http.Request) {
-		CreateNewVote().Render(r.Context(), w)
+		var votes []Vote
+		db.Find(&votes)
+		if len(votes) < MAX_VOTES {
+			CreateNewVote().Render(r.Context(), w)
+		} else {
+			MaxVotesReached().Render(r.Context(), w)
+		}
 	}).Methods("GET")
 
 	router.HandleFunc("/newchoice", func(w http.ResponseWriter, r *http.Request) {
@@ -134,4 +145,13 @@ func main() {
 
 	fmt.Println("Listening on :3000")
 	http.ListenAndServe(":3000", router)
+}
+
+func dbCleanup(db *gorm.DB) {
+	// Every 12 hours run a DB cleanup
+	for range time.Tick(time.Hour * 12) {
+		// How to clean the database of votes and choices older than 10 days
+		db.Where("created_at <= date('now','-10 day')").Delete(&Vote{})
+		db.Where("created_at <= date('now','-10 day')").Delete(&Choice{})
+	}
 }
