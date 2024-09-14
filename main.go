@@ -101,8 +101,8 @@ func main() {
 	router.HandleFunc("/newvote", func(w http.ResponseWriter, r *http.Request) {
 		var votes []Vote
 		db.Find(&votes)
-		if len(votes) < MAX_VOTES {
-			CreateNewVote().Render(r.Context(), w)
+		if len(votes) >= MAX_VOTES {
+			MaxVotesReached().Render(r.Context(), w)
 		} else {
 			r.ParseForm()
 			// fmt.Println(r.Form)
