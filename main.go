@@ -143,8 +143,8 @@ func main() {
 		CreateNewChoice(uint(numOptions), (numOptions < 4)).Render(r.Context(), w)
 	}).Methods("POST")
 
-	fmt.Println("Listening on :3000")
-	http.ListenAndServe(":3000", router)
+	fmt.Println("Listening on :39293")
+	http.ListenAndServe(":39293", router)
 }
 
 func dbCleanup(db *gorm.DB) {
