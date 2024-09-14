@@ -1,0 +1,9 @@
+# No generated files
+**/*_templ.go
+static/style.css
+
+# No DB
+data/*
+
+# The tailwind standalone binary
+tailwindcss
