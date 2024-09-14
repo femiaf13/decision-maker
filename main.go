@@ -51,7 +51,6 @@ func main() {
 		id, _ := strconv.Atoi(params["id"])
 		var vote Vote
 		db.Preload("Choices").First(&vote, id)
-		// fmt.Println(vote)
 		body := Page(VoteTemplate(vote))
 		body.Render(r.Context(), w)
 	}).Methods("GET")

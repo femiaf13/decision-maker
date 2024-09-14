@@ -8,7 +8,13 @@ var voteTablePadding = "px-6 py-3"
 var voteTableButtonStyle = "bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-2 py-2.5 me-2 mb-2"
 
 templ Root(votes []Vote) {
-	// Create a table for all current votes
+	
+	@AllVotesTable(votes)
+	@CreateNewVote()
+}
+
+// Create a table for all current votes
+templ AllVotesTable(votes []Vote) {
 	<div id="all_votes_table">
 		<div class="relative rounded-lg m-4 p-2">
 			<div class="relative bg-violet-600 text-white max-w-fit mx-auto rounded-lg">
@@ -28,8 +34,22 @@ templ Root(votes []Vote) {
 							<td class={voteTablePadding}>{ vote.Title }</td>
 							<td class={voteTablePadding}>{ fmt.Sprintf("%d", vote.NumberVoters) }</td>
 							<td class={voteTablePadding}>{ vote.CreatedAt.Format("2006-01-02 15:04:05") }</td>
-							<td><button type="button" class={voteTableButtonStyle}>Vote</button></td>
-							<td><button type="button" class={voteTableButtonStyle}>See Results</button></td>
+							<td>
+								<button
+									type="button"
+									hx-get={ fmt.Sprintf("/vote/%d", vote.ID)}
+									hx-swap="outerHTML"
+									class={voteTableButtonStyle}>Vote
+								</button>
+							</td>
+							<td>
+								<button 
+									type="button"
+									hx-get={ fmt.Sprintf("/results/%d", vote.ID)}
+									hx-swap="outerHTML"
+									class={voteTableButtonStyle}>See Results
+								</button>
+							</td>
 						</tr>
 					}
 					</tbody>
@@ -38,8 +58,6 @@ templ Root(votes []Vote) {
 			</div>
 		</div>
 	</div>
-
-	@CreateNewVote()
 }
 
 templ CreateNewVote() {
