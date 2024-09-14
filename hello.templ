@@ -4,7 +4,41 @@ import (
 	"fmt"
 )
 
-templ Root() {
+var voteTablePadding = "px-6 py-3"
+var voteTableButtonStyle = "bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-2 py-2.5 me-2 mb-2"
+
+templ Root(votes []Vote) {
+	// Create a table for all current votes
+	<div id="all_votes_table">
+		<div class="relative rounded-lg m-4 p-2">
+			<div class="relative bg-violet-600 text-white max-w-fit mx-auto rounded-lg">
+				<table class="relative table-auto text-white m-2">
+					<thead class="uppercase text-pink-300">
+						<tr>
+							<th class={voteTablePadding}>Vote Title</th>
+							<th class={voteTablePadding}># of Votes</th>
+							<th class={voteTablePadding}>Created at</th>
+							<th class={voteTablePadding}></th>
+							<th class={voteTablePadding}></th>
+						</tr>
+					</thead>
+					<tbody id="tbody">
+					for _, vote := range votes {
+						<tr>
+							<td class={voteTablePadding}>{ vote.Title }</td>
+							<td class={voteTablePadding}>{ fmt.Sprintf("%d", vote.NumberVoters) }</td>
+							<td class={voteTablePadding}>{ vote.CreatedAt.Format("2006-01-02 15:04:05") }</td>
+							<td><button type="button" class={voteTableButtonStyle}>Vote</button></td>
+							<td><button type="button" class={voteTableButtonStyle}>See Results</button></td>
+						</tr>
+					}
+					</tbody>
+				</table>
+				<br><br>
+			</div>
+		</div>
+	</div>
+
 	@CreateNewVote()
 }
 
@@ -51,8 +85,6 @@ templ anotherChoicebutton() {
 	+
 	</button>
 }
-
-var voteTablePadding = "px-6 py-3"
 
 templ VoteTemplate(vote Vote) {
 	<div

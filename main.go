@@ -35,14 +35,14 @@ func main() {
 	db.AutoMigrate(&Vote{})
 	db.AutoMigrate(&Choice{})
 
-	// This will serve files under http://localhost:8000/static/<filename>
+	// This will serve files under ./static/<filename>
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
 
 	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		var vote Vote
-		db.Preload("Choices").First(&vote)
-		// fmt.Println(vote)
-		Page(Root()).Render(r.Context(), w)
+		var votes []Vote
+		db.Preload("Choices").Find(&votes)
+		// fmt.Println(votes)
+		Page(Root(votes)).Render(r.Context(), w)
 	}).Methods("GET")
 
 	router.HandleFunc("/vote/{id}", func(w http.ResponseWriter, r *http.Request) {
