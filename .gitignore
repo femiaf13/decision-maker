@@ -1,6 +1,7 @@
 # No generated files
 **/*_templ.go
 static/style.css
+output/*
 
 # No DB
 data/*
