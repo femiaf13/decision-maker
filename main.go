@@ -28,6 +28,7 @@ type Choice struct {
 }
 
 const MAX_VOTES = 12
+const MAX_LENGTH_STRING int = 32
 
 func main() {
 	router := mux.NewRouter()
@@ -111,11 +112,19 @@ func main() {
 			var vote Vote
 			for key, value := range r.Form {
 				if strings.HasPrefix(key, "choice_") && len(value[0]) > 0 {
+					if len(value[0]) > MAX_LENGTH_STRING {
+						CreateNewVote().Render(r.Context(), w)
+						return
+					}
 					choices = append(choices, Choice{
 						Text: value[0],
 					})
 				}
 				if key == "title" {
+					if len(value[0]) > MAX_LENGTH_STRING {
+						CreateNewVote().Render(r.Context(), w)
+						return
+					}
 					vote = Vote{Title: value[0]}
 				}
 			}

@@ -96,7 +96,7 @@ templ CreateNewVote() {
 		>
 			<div class="m-5">
 				<label class="block mb-2 text-base font-medium p-1" for="title">Title of the vote:</label>
-				<input class="form-input rounded-lg block w-full p-2.5 text-base text-black" type="text" name="title"/>
+				<input class="form-input rounded-lg block w-full p-2.5 text-base text-black" type="text" name="title" maxlength="32"/>
 			</div>
 			for i := 0; i < 2; i++ {
 				@CreateNewChoice(uint(i), false)
@@ -110,7 +110,7 @@ templ CreateNewVote() {
 templ CreateNewChoice(choiceNumber uint, addNewButton bool) {
 	<div class="m-5 pb-1">
 		<label class="block text-base font-medium mb-2 p-1" for={ fmt.Sprintf("choice_%d", choiceNumber) }>Choice:</label>
-		<input class="form-input rounded-lg block w-full mb-2 p-2.5 text-base text-black" type="text" name={ fmt.Sprintf("choice_%d", choiceNumber) }/>
+		<input class="form-input rounded-lg block w-full mb-2 p-2.5 text-base text-black" type="text" name={ fmt.Sprintf("choice_%d", choiceNumber) } maxlength="32"/>
 	</div>
 	if addNewButton {
 		// <button hx-post="/newchoice" hx-swap="outerHTML" type="button">Add another choice</button>
